@@ -127,6 +127,24 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
                 launchArguments=[]
             ))
 
+        elif sys.platform == 'win32':
+            prefix = ['C:\\', 'Program Files.*']
+
+            version_expression = re.compile(
+                r'CINEMA 4D (?P<version>R[\d.]+[\d\w\s]*)'
+            )
+
+            applications.extend(self._searchFilesystem(
+                expression=prefix + [
+                    'MAXON', 'CINEMA 4D .+', 'CINEMA 4D.*\.exe'
+                ],
+                versionExpression=version_expression,
+                label='Cinema 4D',
+                variant='{version}',
+                applicationIdentifier='cinema_4d_{version}',
+                launchArguments=[]
+            ))
+
         self.logger.debug(
             'Discovered applications:\n{0}'.format(
                 pprint.pformat(applications)
