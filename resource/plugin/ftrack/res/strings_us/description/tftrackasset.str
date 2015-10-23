@@ -1,0 +1,6 @@
+STRINGTABLE Tftrackasset
+{
+	Tftrackasset       "ftrack asset";
+    FTRACK_ASSET_ID    "ftrack asset id";
+    THE_BUTTON    "The button";
+}
