@@ -7,8 +7,6 @@ import uuid
 import c4d
 import c4d.documents
 
-import ftrack_connect_cinema_4d.session
-
 
 def get_temporary_file_path(document_name):
     '''Return file path to *document_name* in temporary directory.'''
