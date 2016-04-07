@@ -1,0 +1,7 @@
+STRINGTABLE Tftrackasset
+{
+    Tftrackasset       "ftrack asset";
+    FTRACK_COMPONENT_ID    "ftrack component id";
+    FTRACK_VERSION_ID    "ftrack version id";
+    FTRACK_ASSET_ID    "ftrack asset id";
+}
