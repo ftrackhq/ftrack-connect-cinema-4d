@@ -3,11 +3,18 @@
 import os
 import c4d
 
+import sys
+sys.path.append(
+    os.path.dirname(os.path.realpath(__file__))
+)
+
 import ftrack_connect_cinema_4d.plugin
+
 
 RESOURCE_DIRECTORY = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), 'res'
 )
+
 
 def create_ftrack_menu():
     '''Create custom ftrack menu.'''
