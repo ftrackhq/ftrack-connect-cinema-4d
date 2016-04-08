@@ -3,9 +3,12 @@
 
 import os
 import re
+import shutil
+import pip
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
+import setuptools.command.build_py
 
 
 ROOT_PATH = os.path.dirname(
@@ -14,6 +17,18 @@ ROOT_PATH = os.path.dirname(
 
 SOURCE_PATH = os.path.join(
     ROOT_PATH, 'source'
+)
+
+RESOURCE_PATH = os.path.join(
+    ROOT_PATH, 'resource'
+)
+
+BUILD_PATH = os.path.join(
+    ROOT_PATH, 'build'
+)
+
+STAGING_PATH = os.path.join(
+    BUILD_PATH, 'plugin'
 )
 
 README_PATH = os.path.join(ROOT_PATH, 'README.rst')
@@ -42,6 +57,65 @@ class PyTest(TestCommand):
         raise SystemExit(errno)
 
 
+class BuildPlugin(setuptools.command.build_py.build_py):
+    '''Build plugin.'''
+
+    def run(self):
+        '''Run the build step.'''
+        ROOT_PATH = os.path.dirname(
+            os.path.realpath(__file__)
+        )
+
+        SOURCE_PATH = os.path.join(
+            ROOT_PATH, 'source'
+        )
+
+        RESOURCE_PATH = os.path.join(
+            ROOT_PATH, 'resource'
+        )
+
+        BUILD_PATH = os.path.join(
+            ROOT_PATH, 'build'
+        )
+
+        STAGING_PATH = os.path.join(
+            BUILD_PATH, 'plugin'
+        )
+
+        # Clean staging path
+        shutil.rmtree(STAGING_PATH, ignore_errors=True)
+
+        # Copy plugin files
+        shutil.copytree(
+            os.path.join(RESOURCE_PATH, 'plugin'),
+            STAGING_PATH
+        )
+
+        # Copy source package
+        shutil.copytree(
+            os.path.join(SOURCE_PATH, 'ftrack_connect_cinema_4d'),
+            os.path.join(STAGING_PATH, 'ftrack', 'ftrack_connect_cinema_4d')
+        )
+
+        # Copy spark package
+        shutil.copytree(
+            os.environ['FTRACK_CONNECT_SPARK_DIST_DIR'],
+            os.path.join(STAGING_PATH, 'ftrack', 'ftrack_connect_spark')
+        )
+
+        # Add dependencies.
+        modules = ('appdirs', 'ftrack-python-api')
+        for module in modules:
+            pip.main(
+                [
+                    'install',
+                    module,
+                    '--target',
+                    os.path.join(STAGING_PATH, 'ftrack', 'dependencies')
+                ]
+            )
+
+
 # Configuration.
 setup(
     name='ftrack connect Cinema 4D',
@@ -67,6 +141,7 @@ setup(
         'pytest >= 2.3.5, < 3'
     ],
     cmdclass={
-        'test': PyTest
+        'test': PyTest,
+        'build_py': BuildPlugin
     }
 )
