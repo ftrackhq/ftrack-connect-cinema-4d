@@ -10,6 +10,7 @@ import uuid
 
 import c4d
 import c4d.gui
+import appdirs
 
 import ftrack_connect_cinema_4d.event
 
@@ -113,8 +114,44 @@ class SparkCommand(c4d.plugins.CommandData):
             )
             raise
 
+        # Try to fetch api credentials.
+        config_file = os.path.join(
+            appdirs.user_data_dir(
+                'ftrack-connect', 'ftrack'
+            ),
+            'config.json'
+        )
+
+        config = None
+        if os.path.isfile(config_file):
+            self.logger.info(u'Reading config from {0}'.format(config_file))
+
+            with open(config_file, 'r') as file:
+                try:
+                    config = json.load(file)
+                except Exception:
+                    logger.exception(
+                        u'Exception reading json config in {0}.'.format(
+                            config_file
+                        )
+                    )
+
+        server_url = None
+        api_user = None
+        api_key = None
+
         try:
-            self._session = ftrack_api.Session()
+            credentials = config['accounts'][0]
+            server_url = credentials['server_url']
+            api_user = credentials['api_user']
+            api_key = credentials['api_key']
+        except Exception:
+            self.logger.error('Failed to parse credentials from config data.')
+
+        try:
+            self._session = ftrack_api.Session(
+                server_url=server_url, api_user=api_user, api_key=api_key
+            )
         except Exception:
             self.logger.exception('ftrack api session initialization failed.')
             c4d.gui.MessageDialog(

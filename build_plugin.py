@@ -3,6 +3,7 @@
 
 import os
 import shutil
+import pip
 
 
 ROOT_PATH = os.path.dirname(
@@ -46,3 +47,9 @@ shutil.copytree(
     os.path.join(STAGING_PATH, 'ftrack', 'ftrack_connect_spark')
 )
 
+# Add dependencies.
+modules = ('appdirs', 'ftrack-python-api')
+for module in modules:
+    pip.main(
+        ['install', module, '--target', os.path.join(STAGING_PATH, 'ftrack')]
+    )
