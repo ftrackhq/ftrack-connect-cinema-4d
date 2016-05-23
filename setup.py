@@ -98,10 +98,17 @@ class BuildPlugin(setuptools.command.build_py.build_py):
         )
 
         # Copy spark package
-        shutil.copytree(
-            os.environ['FTRACK_CONNECT_SPARK_DIST_DIR'],
-            os.path.join(STAGING_PATH, 'ftrack', 'ftrack_connect_spark')
-        )
+        try:
+            shutil.copytree(
+                os.environ['FTRACK_CONNECT_SPARK_DIST_DIR'],
+                os.path.join(STAGING_PATH, 'ftrack', 'ftrack_connect_spark')
+            )
+        except KeyError:
+            raise ValueError(
+                'Please set the environment variable '
+                '`FTRACK_CONNECT_SPARK_DIST_DIR` to the directory contining '
+                'the distribution files for ftrack-connect-spark.'
+            )
 
         # Add dependencies.
         modules = ('appdirs', 'ftrack-python-api')
