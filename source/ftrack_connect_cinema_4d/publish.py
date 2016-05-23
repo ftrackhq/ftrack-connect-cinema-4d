@@ -4,9 +4,13 @@
 import tempfile
 import os
 import uuid
+import logging
 
 import c4d
 import c4d.documents
+
+
+logger = logging.getLogger('ftrack_connect_cinema_4d.publish')
 
 
 def get_temporary_file_path(document_name):
@@ -36,3 +40,33 @@ def export_c4d_document():
         c4d.FORMAT_C4DEXPORT
     )
     return filePath
+
+
+def publish(session, options):
+    '''Publish a version based on *options*.'''
+    logger.info(u'Publishing with options: {0}'.format(options))
+    document_path = export_c4d_document()
+    logger.info(u'Exported C4D document: {0!r}'.format(document_path))
+
+    # Create new or get existing asset.
+    asset = session.ensure('Asset', {
+        'context_id': options['parent'],
+        'type_id': options['type'],
+        'name': options['name']
+    })
+
+    version = session.create('AssetVersion', {
+        'asset': asset,
+        'task_id': options.get('task', None),
+        'comment': options.get('description', '')
+    })
+
+    # Commit before adding components to ensure structures dependent on
+    # committed ancestors work as expected.
+    session.commit()
+
+    component = version.create_component(
+        document_path, location='auto'
+    )
+
+    return version['id']

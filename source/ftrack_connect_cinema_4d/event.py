@@ -13,49 +13,30 @@ import ftrack_connect_cinema_4d.publish
 logger = logging.getLogger('ftrack_connect_cinema_4d.event')
 
 
-def show_debug_message(data):
+def show_debug_message(session, data):
     '''Display message'''
     c4d.gui.MessageDialog(data['message'])
     return {'success': True}
 
 
-def get_publish_options(data):
+def get_publish_options(session, data):
     '''Get publish options'''
     return dict(
         name=ftrack_connect_cinema_4d.publish.get_document_name()
     )
 
-
-def export_media(options):
-    '''Export media with *options*.'''
-    logger.info(u'Exporting files')
-    files = []
-    if options.get('delivery', False):
-        document_path = ftrack_connect_cinema_4d.publish.export_c4d_document()
-        filename, file_extension = os.path.splitext(document_path)
-        files.append({
-            'use': 'delivery',
-            'name': 'c4d-document',
-            'path': document_path,
-            'extension': file_extension,
-            'size': os.path.getsize(document_path),
-        })
-
-    logger.info(u'Exported files: {0}'.format(files))
-    return files
-
-
-def upload_media(data):
-    '''Upload media.'''
-    raise NotImplementedError('upload_media is not implemented yet.')
+def publish_media(session, options):
+    logger.info(u'publish media')
+    result = ftrack_connect_cinema_4d.publish.publish(session, options)
+    logger.info(u'Published: {0}'.format(result))
+    return result
 
 
 #: Map functions to event names
 event_handlers = dict(
     show_debug_message=show_debug_message,
     get_publish_options=get_publish_options,
-    export_media=export_media,
-    upload_media=upload_media,
+    publish_media=publish_media,
 )
 
 
@@ -82,7 +63,7 @@ def handle_event(event, session=None):
 
     try:
         data = event['data']
-        output = event_handlers[functionName](data)
+        output = event_handlers[functionName](session, data)
         result = {
             'success': True,
             'output': output
