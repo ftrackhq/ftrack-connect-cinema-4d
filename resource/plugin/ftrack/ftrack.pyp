@@ -11,6 +11,7 @@ sys.path.append(
     os.path.join(os.path.dirname(os.path.realpath(__file__)), 'dependencies')
 )
 
+import ftrack_connect_cinema_4d.configure_logging
 import ftrack_connect_cinema_4d.plugin
 
 
@@ -46,6 +47,10 @@ def PluginMessage(id, data):
 
 def register_plugins():
     '''Register ftrack plugins.'''
+    ftrack_connect_cinema_4d.configure_logging.configure_logging(
+        'ftrack_connect_cinema_4d'
+    )
+
     icon = c4d.bitmaps.BaseBitmap()
     icon.InitWith(os.path.join(
         RESOURCE_DIRECTORY, 'ftrack.tif'
