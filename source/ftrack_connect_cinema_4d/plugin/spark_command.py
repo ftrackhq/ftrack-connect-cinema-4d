@@ -12,6 +12,7 @@ import c4d
 import c4d.gui
 import appdirs
 
+import ftrack_connect_cinema_4d
 import ftrack_connect_cinema_4d.event
 
 # ftrack plug in ID
@@ -183,7 +184,9 @@ class SparkCommand(c4d.plugins.CommandData):
             server_url=session.server_url,
             api_key=session.api_key,
             api_user=session.api_user,
-            subscription_id=subscription_id
+            subscription_id=subscription_id,
+            host_version=c4d.GetC4DVersion(),
+            plugin_version=ftrack_connect_cinema_4d.__version__
         )
         encodedOptions = base64.b64encode(json.dumps(options))
         return '{0}?options={1}'.format(FTRACK_CONNECT_SPARK_URL, encodedOptions)
