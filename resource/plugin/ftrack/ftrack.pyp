@@ -13,6 +13,8 @@ sys.path.append(
 
 import ftrack_connect_cinema_4d.configure_logging
 import ftrack_connect_cinema_4d.plugin
+import ftrack_connect_cinema_4d.plugin.component_tag
+import ftrack_connect_cinema_4d.plugin.ftrack_message_data
 
 
 RESOURCE_DIRECTORY = os.path.join(
@@ -56,6 +58,15 @@ def register_plugins():
         RESOURCE_DIRECTORY, 'ftrack.tif'
     ))
 
+    c4d.plugins.RegisterTagPlugin(
+        id=ftrack_connect_cinema_4d.plugin.component_tag.PLUGIN_ID,
+        str='ftrack Asset',
+        info=c4d.TAG_EXPRESSION | c4d.TAG_VISIBLE,
+        g=ftrack_connect_cinema_4d.plugin.ComponentTag,
+        description='Tftrackasset',
+        icon=icon
+    )
+
     c4d.plugins.RegisterCommandPlugin(
         id=ftrack_connect_cinema_4d.plugin.spark_command.PLUGIN_ID,
         str='ftrack',
@@ -64,6 +75,14 @@ def register_plugins():
         icon=icon,
         dat=ftrack_connect_cinema_4d.plugin.SparkCommand()
     )
+
+    c4d.plugins.RegisterMessagePlugin(
+        id=ftrack_connect_cinema_4d.plugin.ftrack_message_data.PLUGIN_ID,
+        str='ftrack message data',
+        info=0,
+        dat=ftrack_connect_cinema_4d.plugin.FtrackMessageData()
+    )
+
 
 if __name__ == '__main__':
     register_plugins()
