@@ -11,8 +11,8 @@ import collections
 
 import ftrack_connect_cinema_4d.core_message_event
 
-# TODO: Replace this ID
-PLUGIN_ID = 1230002
+#: ftrack message data plugin id
+PLUGIN_ID = 1037466
 
 
 class FtrackMessageData(c4d.plugins.MessageData):

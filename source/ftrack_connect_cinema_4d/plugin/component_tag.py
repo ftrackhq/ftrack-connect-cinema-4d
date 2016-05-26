@@ -3,8 +3,8 @@
 
 import c4d
 
-# TODO: Replace this ID
-PLUGIN_ID = 1230001
+#: ftrack component tag plugin id.
+PLUGIN_ID = 1037465
 
 
 class ComponentTag(c4d.plugins.TagData):
