@@ -25,7 +25,9 @@ def get_temporary_file_path(document_name):
 def get_document_name():
     '''Return document name.'''
     document = c4d.documents.GetActiveDocument()
-    return document.GetDocumentName() or 'Untitled document'
+    document_name = document.GetDocumentName() or 'Untitled document'
+    (name, extension) = os.path.splitext(document_name)
+    return name
 
 
 def export_c4d_document():
