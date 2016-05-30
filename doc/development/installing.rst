@@ -7,11 +7,10 @@
 Installing
 **********
 
-.. highlight:: bash
+.. note::
 
-Installation is simple with `pip <http://www.pip-installer.org/>`_::
-
-    pip install ftrack connect Cinema 4D
+  Unless you are doing any modifications, there should be no need to build the 
+  extension yourself.
 
 Building from source
 ====================
@@ -23,14 +22,23 @@ cloning the public repository::
 
     git clone git@bitbucket.org:ftrack/ftrack-connect-cinema-4d.git
 
-Then you can build and install the package into your current Python
-site-packages folder::
+Obtain `ftrack-connect-spark` and build the distribution files.
 
-    python setup.py install
+Set the required environment variables. Set the environment variable
+`FTRACK_CONNECT_SPARK_DIST_DIR` to the directory contining the distribution
+files for ftrack-connect-spark.
 
-Alternatively, just build locally and manage yourself::
+set the environment variable `FTRACK_CONNECT_CINEMA_4D_PLUGIN_DIR` to the
+installation directory  for ftrack-connectc-cinema-4d, e.g.:
+`/Users/john/Library/Preferences/MAXON/CINEMA 4D R17_89538A46/plugins/ftrack`.
+
+Build the plugin (Will build the plugin and dependencies in `build/plugin`)::
 
     python setup.py build
+
+Install the plugin (Copy built files to Cinema 4D's plugin directory)::
+
+    python install_plugin.py
 
 Building documentation from source
 ----------------------------------
