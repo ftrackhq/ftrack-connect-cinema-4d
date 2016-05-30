@@ -13,6 +13,11 @@ import c4d.documents
 logger = logging.getLogger('ftrack_connect_cinema_4d.publish')
 
 
+class SavePreviewImageError(Exception):
+    '''Raise when unable to save a preview image.'''
+    pass
+
+
 def get_temporary_file_path(document_name):
     '''Return file path to *document_name* in temporary directory.'''
     temporary_directory = tempfile.mkdtemp(prefix='ftrack_connect')
@@ -44,6 +49,33 @@ def export_c4d_document():
     return filePath
 
 
+
+def save_preview_image():
+    '''Save preview image as temporary file and return file path.
+
+    The image will be saved as a JPEG file.
+
+    TODO: Handle situations when there is no document preview and render a 
+    preview image using `c4d.documents.RenderDocument`. 
+    '''
+    document = c4d.documents.GetActiveDocument()
+    if not document:
+        raise SavePreviewImageError('No active document.')
+
+    bitmap = document.GetDocPreviewBitmap()
+    if not bitmap:
+        raise SavePreviewImageError('Unable to get document preview bitmap.')
+
+    document_name = get_document_name() + '.jpg'
+    file_path = get_temporary_file_path(document_name)
+    result = bitmap.Save(file_path, c4d.FILTER_JPG)
+    if result != True:
+        raise SavePreviewImageError(
+            u'Failed to save bitmap (result code: {0!r})'.format(result)
+        )
+    return file_path
+
+
 def publish(session, options):
     '''Publish a version based on *options*.'''
     logger.info(u'Publishing with options: {0}'.format(options))
@@ -67,8 +99,16 @@ def publish(session, options):
     # committed ancestors work as expected.
     session.commit()
 
+    try:
+        thumbnail_path = save_preview_image()
+        thumbnail_component = version.create_thumbnail(thumbnail_path)
+    except Exception:
+        logger.exception('Failed to save thumbnail.')
+
     component = version.create_component(
-        document_path, location='auto'
+        document_path,
+        data=dict(name='cinema-4d-document'),
+        location='auto'
     )
 
     return version['id']
