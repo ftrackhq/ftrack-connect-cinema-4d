@@ -5,9 +5,8 @@
 Introduction
 ************
 
-The ftrack connect Cinema 4D plugin act as a bridge between the Adobe
-applications and ftrack. With the plugin you can easily publish and import
-your files to ftrack.
+The ftrack connect Cinema 4D plugin act as a bridge between the Cinema 4D and
+ftrack. With the plugin you can easily publish and import your files to ftrack.
 
 .. note::
 
