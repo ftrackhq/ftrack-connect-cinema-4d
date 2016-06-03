@@ -1,7 +1,7 @@
 ..
     :copyright: Copyright (c) 2016 ftrack
 
-.. _photoshop:
+.. _cinema4d:
 
 *********
 Cinema 4D

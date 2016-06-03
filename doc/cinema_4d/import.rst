@@ -1,7 +1,7 @@
 ..
     :copyright: Copyright (c) 2016 ftrack
 
-.. _photoshop/import:
+.. _cinema4d/import:
 
 **********************
 Import published files

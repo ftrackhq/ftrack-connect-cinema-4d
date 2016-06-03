@@ -1,7 +1,7 @@
 ..
     :copyright: Copyright (c) 2016 ftrack
 
-.. _photoshop/publish:
+.. _cinema4d/publish:
 
 *****************
 Publish your work
