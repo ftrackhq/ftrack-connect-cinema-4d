@@ -2,13 +2,16 @@
 # :copyright: Copyright (c) 2015 ftrack
 
 import os
+import os.path
 import re
 import shutil
 import pip
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
+import setuptools
 import setuptools.command.build_py
+import distutils.log
 
 
 ROOT_PATH = os.path.dirname(
@@ -57,31 +60,20 @@ class PyTest(TestCommand):
         raise SystemExit(errno)
 
 
-class BuildPlugin(setuptools.command.build_py.build_py):
+class BuildPlugin(setuptools.Command):
     '''Build plugin.'''
+    description = 'Download dependencies and build plugin .'
+
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
 
     def run(self):
         '''Run the build step.'''
-        ROOT_PATH = os.path.dirname(
-            os.path.realpath(__file__)
-        )
-
-        SOURCE_PATH = os.path.join(
-            ROOT_PATH, 'source'
-        )
-
-        RESOURCE_PATH = os.path.join(
-            ROOT_PATH, 'resource'
-        )
-
-        BUILD_PATH = os.path.join(
-            ROOT_PATH, 'build'
-        )
-
-        STAGING_PATH = os.path.join(
-            BUILD_PATH, 'plugin'
-        )
-
         # Clean staging path
         shutil.rmtree(STAGING_PATH, ignore_errors=True)
 
@@ -123,6 +115,56 @@ class BuildPlugin(setuptools.command.build_py.build_py):
             )
 
 
+class InstallPlugin(setuptools.Command):
+    '''Install plugin.'''
+    description = 'Install plugin to `FTRACK_CONNECT_CINEMA_4D_PLUGIN_DIR`.'
+
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        '''Install plugin.'''
+        ftrack_connect_cinema_4d_plugin_dir = None
+        try:
+            ftrack_connect_cinema_4d_plugin_dir = os.path.abspath(
+                os.environ['FTRACK_CONNECT_CINEMA_4D_PLUGIN_DIR']
+            )
+        except KeyError:
+            raise ValueError(
+                'Please set the environment variable '
+                '`FTRACK_CONNECT_CINEMA_4D_PLUGIN_DIR` to the installation '
+                'directory for ftrack-connectc-cinema-4d, e.g.: \n'
+                '`/Users/john/Library/Preferences/MAXON/CINEMA 4D R17_89538A46/plugins/ftrack`.'
+            )
+
+        # Clean staging path
+        distutils.log.info(
+            u'Cleaning target directory: {0}'.format(ftrack_connect_cinema_4d_plugin_dir)
+        )
+        shutil.rmtree(ftrack_connect_cinema_4d_plugin_dir, ignore_errors=True)
+
+        # Copy plugin files
+        plugin_directory = os.path.join(STAGING_PATH, 'ftrack')
+        distutils.log.info(
+            u'Copying plugin files: {0} -> {1}'.format(
+                plugin_directory,
+                ftrack_connect_cinema_4d_plugin_dir
+            )
+        )
+        shutil.copytree(
+            plugin_directory,
+            ftrack_connect_cinema_4d_plugin_dir
+        )
+        distutils.log.info(
+            u'Installed plugin to: {0}'.format(ftrack_connect_cinema_4d_plugin_dir)
+        )
+
+
 # Configuration.
 setup(
     name='ftrack connect Cinema 4D',
@@ -156,6 +198,7 @@ setup(
     ],
     cmdclass={
         'test': PyTest,
-        'build_py': BuildPlugin
+        'build_plugin': BuildPlugin,
+        'install_plugin': InstallPlugin
     }
 )
