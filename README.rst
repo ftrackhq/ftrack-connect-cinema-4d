@@ -9,7 +9,7 @@ Documentation
 *************
 
 Full documentation, including installation and setup guides, can be found at
-https://doc.ftrack.com/ftrack-connect-cinema-4d
+http://ftrack-connect-cinema-4d.rtd.ftrack.com/en/stable/.
 
 *********************
 Copyright and license
