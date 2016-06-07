@@ -122,7 +122,7 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
             applications.extend(self._searchFilesystem(
                 expression=prefix + ['MAXON', 'CINEMA 4D .+', 'CINEMA 4D.+.app'],
                 label='Cinema 4D',
-                variant='R17',
+                variant='{version}',
                 applicationIdentifier='cinema_4d_{version}',
                 launchArguments=[]
             ))
