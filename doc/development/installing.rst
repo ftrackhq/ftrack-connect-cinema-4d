@@ -34,11 +34,11 @@ installation directory  for ftrack-connectc-cinema-4d, e.g.:
 
 Build the plugin (Will build the plugin and dependencies in `build/plugin`)::
 
-    python setup.py build
+    python setup.py build_plugin
 
 Install the plugin (Copy built files to Cinema 4D's plugin directory)::
 
-    python install_plugin.py
+    python setup.py install_plugin
 
 Building documentation from source
 ----------------------------------
