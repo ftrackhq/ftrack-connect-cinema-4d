@@ -6,6 +6,7 @@ import os.path
 import re
 import shutil
 import pip
+import glob
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
@@ -200,5 +201,11 @@ setup(
         'test': PyTest,
         'build_plugin': BuildPlugin,
         'install_plugin': InstallPlugin
-    }
+    },
+    data_files=[
+        (
+            'ftrack_connect_cinema_4d/hook',
+            glob.glob(os.path.join(ROOT_PATH, 'resource', 'hook', '*.py'))
+        )
+    ]
 )
