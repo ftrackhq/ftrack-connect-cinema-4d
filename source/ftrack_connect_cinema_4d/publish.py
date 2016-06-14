@@ -82,33 +82,41 @@ def publish(session, options):
     document_path = export_c4d_document()
     logger.info(u'Exported C4D document: {0!r}'.format(document_path))
 
-    # Create new or get existing asset.
-    asset = session.ensure('Asset', {
-        'context_id': options['parent'],
-        'type_id': options['type'],
-        'name': options['name']
-    })
-
-    version = session.create('AssetVersion', {
-        'asset': asset,
-        'task_id': options.get('task', None),
-        'comment': options.get('description', '')
-    })
-
-    # Commit before adding components to ensure structures dependent on
-    # committed ancestors work as expected.
-    session.commit()
-
     try:
-        thumbnail_path = save_preview_image()
-        thumbnail_component = version.create_thumbnail(thumbnail_path)
-    except Exception:
-        logger.exception('Failed to save thumbnail.')
+        # Create new or get existing asset.
+        asset = session.ensure('Asset', {
+            'context_id': options['parent'],
+            'type_id': options['type'],
+            'name': options['name']
+        })
 
-    component = version.create_component(
-        document_path,
-        data=dict(name='cinema-4d-document'),
-        location='auto'
-    )
+        version = session.create('AssetVersion', {
+            'asset': asset,
+            'task_id': options.get('task', None),
+            'comment': options.get('description', '')
+        })
+
+        # Commit before adding components to ensure structures dependent on
+        # committed ancestors work as expected.
+        session.commit()
+
+        try:
+            thumbnail_path = save_preview_image()
+        except Exception:
+            logger.exception('Failed to save thumbnail.')
+        else:
+            thumbnail_component = version.create_thumbnail(thumbnail_path)
+
+        component = version.create_component(
+            document_path,
+            data=dict(name='cinema-4d-document'),
+            location='auto'
+        )
+
+    except Exception:
+        # On any exception, rollback and re-raise error.
+        logger.warning('Failed to publish document, rolling back session')
+        session.rollback()
+        raise
 
     return version['id']
