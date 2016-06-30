@@ -6,6 +6,13 @@
 *************
 Release Notes
 *************
+.. release:: 0.1.1
+    :date: 2016-06-14
+
+    .. change:: fixed
+        :tags: Publish
+
+        Session not reset when publish fails, making it impossible to try again.
 
 .. release:: 0.1.0
     :date: 2016-06-07
