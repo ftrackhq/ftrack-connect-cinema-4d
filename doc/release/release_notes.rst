@@ -6,6 +6,16 @@
 *************
 Release Notes
 *************
+
+.. release:: 0.1.2
+    :date: 2016-07-14
+
+    .. change:: fixed
+        :tags: Publish
+
+        The published component has no file type if the project has not been
+        saved yet.
+
 .. release:: 0.1.1
     :date: 2016-06-14
 
