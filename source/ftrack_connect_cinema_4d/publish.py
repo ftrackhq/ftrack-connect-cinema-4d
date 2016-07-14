@@ -109,7 +109,7 @@ def publish(session, options):
 
         component = version.create_component(
             document_path,
-            data=dict(name='cinema-4d-document'),
+            data=dict(name='cinema-4d-document', file_type='.c4d'),
             location='auto'
         )
 
