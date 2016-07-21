@@ -51,3 +51,6 @@ directory.
 
 .. figure:: /image/install_plugin_preferences.png
    :align: center
+
+Finally, launch Cinema 4D (or restart it if you already have it open). Then
+open the ftrack dialog from the ftrack menu.
