@@ -23,8 +23,17 @@ def show_debug_message(session, data):
 
 def get_publish_options(session, data):
     '''Get publish options'''
+    items = [{
+        'label': 'Selection only',
+        'description': 'Export only the selected objects.',
+        'type': 'boolean',
+        'name': 'selection_only',
+        'value': False,
+    }]
+
     return dict(
-        name=ftrack_connect_cinema_4d.publish.get_document_name()
+        name=ftrack_connect_cinema_4d.publish.get_document_name(),
+        items=items
     )
 
 def publish_media(session, options):

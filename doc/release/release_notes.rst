@@ -7,6 +7,14 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: new
+        :tags: Publish
+
+        Added the option to publish only the selected objects in the active
+        document.
+
 .. release:: 0.1.2
     :date: 2016-07-14
 

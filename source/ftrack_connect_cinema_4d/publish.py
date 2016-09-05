@@ -35,9 +35,8 @@ def get_document_name():
     return name
 
 
-def export_c4d_document():
+def export_c4d_document(document):
     '''Export C4D document.'''
-    document = c4d.documents.GetActiveDocument()
     document_name = document.GetDocumentName() or 'Untitled document'
     filePath = get_temporary_file_path(document_name)
     c4d.documents.SaveDocument(
@@ -49,18 +48,43 @@ def export_c4d_document():
     return filePath
 
 
+def render_preview_image(document):
+    '''Render *document* as a preview image and return bitmap.
 
-def save_preview_image():
-    '''Save preview image as temporary file and return file path.
+    Note: will not render correctly when called outside of the main thread.
+    For example, as the callback in an ftrack event.
+    '''
+    render_data = document.GetActiveRenderData().GetData()
+    render_data[c4d.RDATA_RENDERENGINE] = c4d.RDATA_RENDERENGINE_PREVIEWHARDWARE
+    bitmap = c4d.bitmaps.BaseBitmap()
+    bitmap.Init(
+        x=int(render_data[c4d.RDATA_XRES]),
+        y=int(render_data[c4d.RDATA_YRES]),
+        depth=24
+    )
+    render_flags = (c4d.RENDERFLAGS_PREVIEWRENDER | c4d.RENDERFLAGS_DONTANIMATE)
+    result = c4d.documents.RenderDocument(
+        document,
+        render_data,
+        bitmap,
+        render_flags
+    )
+    if result != c4d.RENDERRESULT_OK:
+        raise SavePreviewImageError('Unable to get document preview bitmap.')
+
+    return bitmap
+
+
+def save_preview_image(document):
+    '''Save preview image from *document* as temporary file and return file path.
 
     The image will be saved as a JPEG file.
 
     TODO: Handle situations when there is no document preview and render a 
-    preview image using `c4d.documents.RenderDocument`. 
+    preview image using `render_preview_image`.
     '''
-    document = c4d.documents.GetActiveDocument()
     if not document:
-        raise SavePreviewImageError('No active document.')
+        raise SavePreviewImageError('Can not save image without document.')
 
     bitmap = document.GetDocPreviewBitmap()
     if not bitmap:
@@ -79,7 +103,14 @@ def save_preview_image():
 def publish(session, options):
     '''Publish a version based on *options*.'''
     logger.info(u'Publishing with options: {0}'.format(options))
-    document_path = export_c4d_document()
+
+    document = c4d.documents.GetActiveDocument()
+    if options.get('selection_only', False):
+        logger.info(u'Isolating selected objects into new document')
+        selected_objects = document.GetActiveObjects(c4d.GETACTIVEOBJECTFLAGS_0)
+        document = c4d.documents.IsolateObjects(document, selected_objects)
+
+    document_path = export_c4d_document(document)
     logger.info(u'Exported C4D document: {0!r}'.format(document_path))
 
     try:
@@ -101,7 +132,7 @@ def publish(session, options):
         session.commit()
 
         try:
-            thumbnail_path = save_preview_image()
+            thumbnail_path = save_preview_image(document)
         except Exception:
             logger.exception('Failed to save thumbnail.')
         else:
