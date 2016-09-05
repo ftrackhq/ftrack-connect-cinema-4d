@@ -13,6 +13,11 @@ import c4d.documents
 logger = logging.getLogger('ftrack_connect_cinema_4d.publish')
 
 
+class PublishError(Exception):
+    '''Raise when unable to publish.'''
+    pass
+
+
 class SavePreviewImageError(Exception):
     '''Raise when unable to save a preview image.'''
     pass
@@ -104,16 +109,21 @@ def publish(session, options):
     '''Publish a version based on *options*.'''
     logger.info(u'Publishing with options: {0}'.format(options))
 
-    document = c4d.documents.GetActiveDocument()
-    if options.get('selection_only', False):
-        logger.info(u'Isolating selected objects into new document')
-        selected_objects = document.GetActiveObjects(c4d.GETACTIVEOBJECTFLAGS_0)
-        document = c4d.documents.IsolateObjects(document, selected_objects)
-
-    document_path = export_c4d_document(document)
-    logger.info(u'Exported C4D document: {0!r}'.format(document_path))
-
     try:
+        document = c4d.documents.GetActiveDocument()
+        if options.get('selection_only', False):
+            logger.info(u'Isolating selected objects into new document')
+            selected_objects = document.GetActiveObjects(
+                c4d.GETACTIVEOBJECTFLAGS_0
+            )
+            if not len(selected_objects):
+                raise PublishError('No objects selected')
+
+            document = c4d.documents.IsolateObjects(document, selected_objects)
+
+        document_path = export_c4d_document(document)
+        logger.info(u'Exported C4D document: {0!r}'.format(document_path))
+
         # Create new or get existing asset.
         asset = session.ensure('Asset', {
             'context_id': options['parent'],
