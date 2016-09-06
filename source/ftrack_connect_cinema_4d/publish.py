@@ -110,7 +110,22 @@ def publish(session, options):
     logger.info(u'Publishing with options: {0}'.format(options))
 
     try:
-        document = c4d.documents.GetActiveDocument()
+        active_document = c4d.documents.GetActiveDocument()
+
+        thumbnail_path = None
+        try:
+            # TODO: Use the new `document` instead of `active_document` when
+            # grabbing the preview image so that when publishing only select
+            # objects a correct preview is generated.
+            # 
+            # This requires that publish is executed in the main thread so
+            # that render_preview_image renders a non-black image.
+            # 
+            thumbnail_path = save_preview_image(active_document)
+        except Exception:
+            logger.exception('Failed to save thumbnail.')
+
+        document = active_document
         if options.get('selection_only', False):
             logger.info(u'Isolating selected objects into new document')
             selected_objects = document.GetActiveObjects(
@@ -136,17 +151,12 @@ def publish(session, options):
             'task_id': options.get('task', None),
             'comment': options.get('description', '')
         })
+        if thumbnail_path:
+            version.create_thumbnail(thumbnail_path)
 
         # Commit before adding components to ensure structures dependent on
         # committed ancestors work as expected.
         session.commit()
-
-        try:
-            thumbnail_path = save_preview_image(document)
-        except Exception:
-            logger.exception('Failed to save thumbnail.')
-        else:
-            thumbnail_component = version.create_thumbnail(thumbnail_path)
 
         component = version.create_component(
             document_path,
