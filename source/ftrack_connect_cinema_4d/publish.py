@@ -111,20 +111,6 @@ def publish(session, options):
 
     try:
         active_document = c4d.documents.GetActiveDocument()
-
-        thumbnail_path = None
-        try:
-            # TODO: Use the new `document` instead of `active_document` when
-            # grabbing the preview image so that when publishing only select
-            # objects a correct preview is generated.
-            # 
-            # This requires that publish is executed in the main thread so
-            # that render_preview_image renders a non-black image.
-            # 
-            thumbnail_path = save_preview_image(active_document)
-        except Exception:
-            logger.exception('Failed to save thumbnail.')
-
         document = active_document
         if options.get('selection_only', False):
             logger.info(u'Isolating selected objects into new document')
@@ -138,6 +124,19 @@ def publish(session, options):
 
         document_path = export_c4d_document(document)
         logger.info(u'Exported C4D document: {0!r}'.format(document_path))
+
+        thumbnail_path = None
+        try:
+            # TODO: Use the new `document` instead of `active_document` when
+            # grabbing the preview image so that when publishing only select
+            # objects a correct preview is generated.
+            # 
+            # This requires that publish is executed in the main thread so
+            # that render_preview_image renders a non-black image.
+            # 
+            thumbnail_path = save_preview_image(active_document)
+        except Exception:
+            logger.exception('Failed to save thumbnail.')
 
         # Create new or get existing asset.
         asset = session.ensure('Asset', {
