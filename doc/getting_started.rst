@@ -8,6 +8,12 @@ Getting started
 Getting started with the Cinema 4D plugin is really easy, just follow this guide
 and you will be up and running in no time.
 
+Requirements
+------------
+
+The plugin requires Cinema 4D R17 or later and either Windows (7 or later with
+Internet Explorer 11 installed), or macOS (10.11 or newer).
+
 .. _getting_started/signup:
 
 1. Signup to ftrack (only for new users)

@@ -24,3 +24,10 @@ following directory, in a file named `ftrack_connect_cinema_4d.log`.
 
 :Linux:
     ~/.local/share/ftrack-connect/log
+
+Known issues
+============
+
+The plugin is not able to communicate with locally hosted ftrack servers
+running HTTP when using Cinema 4D R18 (SP0 or SP1) and macOS 10.11 or newer.
+Using R17 or R18 SP2 should work.
