@@ -12,6 +12,11 @@ import ftrack_connect_cinema_4d.asset
 import ftrack_connect_cinema_4d.core_message_event
 import ftrack_connect_cinema_4d.publish
 
+
+from ftrack_connect_cinema_4d.plugin.ftrack_message_data import (
+    FtrackMessageData
+)
+
 logger = logging.getLogger('ftrack_connect_cinema_4d.event')
 
 
@@ -29,7 +34,12 @@ def get_publish_options(session, data):
 
 def publish_media(session, options):
     logger.info(u'publish media')
-    result = ftrack_connect_cinema_4d.publish.publish(session, options)
+
+
+    result = FtrackMessageData.execute_in_main_thread(
+        ftrack_connect_cinema_4d.publish.publish, session, options
+    )
+
     logger.info(u'Published: {0}'.format(result))
     return result
 
@@ -45,9 +55,13 @@ def get_import_components(session, data):
 def import_component(session, data):
     '''Import component in *data*.'''
     logger.info(u'Importing component: {0!r}'.format(data))
-    ftrack_connect_cinema_4d.core_message_event.send_event(
-        'IMPORT_OBJECT_FROM_FILE_PATH', data
+
+
+
+    FtrackMessageData.execute_in_main_thread(
+        ftrack_connect_cinema_4d.asset.import_object_from_file_path, *[], **data
     )
+
     return True
 
 

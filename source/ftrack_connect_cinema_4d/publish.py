@@ -80,9 +80,10 @@ def publish(session, options):
     '''Publish a version based on *options*.'''
     logger.info(u'Publishing with options: {0}'.format(options))
     document_path = export_c4d_document()
-    logger.info(u'Exported C4D document: {0!r}'.format(document_path))
+    logger.info(u'Exported C4D document: {0}'.format(document_path))
 
     try:
+
         # Create new or get existing asset.
         asset = session.ensure('Asset', {
             'context_id': options['parent'],

@@ -7,6 +7,12 @@
 Release Notes
 *************
 
+.. release:: upcoming
+    .. change:: fixed
+        :tags: Publish
+
+        Threading issues caused publishes to fail.
+
 .. release:: 0.1.2
     :date: 2016-07-14
 
