@@ -111,12 +111,12 @@ def import_object_from_file_path(file_path, component_id=None, asset_id=None, ve
     document = c4d.documents.GetActiveDocument()
     logger.info(u'Active document: {0}'.format(document))
     if not document:
-        return
+        return False
 
     xref_object = c4d.BaseObject(c4d.Oxref)
     logger.info(u'Created XRef Object: {0}'.format(xref_object))
     if not xref_object:
-        return
+        return False
 
     document.InsertObject(xref_object)
     logger.info(u'Inserted xref object: {0}'.format(xref_object))
@@ -134,5 +134,6 @@ def import_object_from_file_path(file_path, component_id=None, asset_id=None, ve
 
     logger.info(u'Setting asset parameters')
     set_paramaters(xref_object, component_id=component_id, asset_id=asset_id, version_id=version_id)
-
     c4d.EventAdd()
+    return True
+

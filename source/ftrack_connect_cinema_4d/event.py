@@ -46,22 +46,22 @@ def publish_media(session, options):
 def get_import_components(session, data):
     '''Export media with *options*.'''
     logger.info(u'Getting import components: {0!r}'.format(data))
-    return ftrack_connect_cinema_4d.asset.get_importable_components(
+    result = ftrack_connect_cinema_4d.asset.get_importable_components(
         session, data['versionId']
     )
+    logger.info(u'Result: {0!r}'.format(result))
+    return result
 
 
 def import_component(session, data):
     '''Import component in *data*.'''
     logger.info(u'Importing component: {0!r}'.format(data))
 
-
-
-    FtrackMessageData.execute_in_main_thread(
+    result = FtrackMessageData.execute_in_main_thread(
         ftrack_connect_cinema_4d.asset.import_object_from_file_path, *[], **data
     )
-
-    return True
+    logger.info(u'Result: {0!r}'.format(result))
+    return result
 
 
 #: Map functions to event names
