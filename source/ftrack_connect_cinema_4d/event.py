@@ -9,7 +9,6 @@ import os.path
 import c4d.gui
 
 import ftrack_connect_cinema_4d.asset
-import ftrack_connect_cinema_4d.core_message_event
 import ftrack_connect_cinema_4d.publish
 
 

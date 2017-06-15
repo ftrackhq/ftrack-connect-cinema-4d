@@ -12,8 +12,6 @@ import logging
 import threading
 import collections
 
-import ftrack_connect_cinema_4d.core_message_event
-
 #: ftrack message data plugin id
 PLUGIN_ID = 1037466
 
