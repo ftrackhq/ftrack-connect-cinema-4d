@@ -8,6 +8,11 @@ Release Notes
 *************
 
 .. release:: upcoming
+
+    .. change:: fixed
+
+        API version is incompatible with ftrack server version 3.5.
+
     .. change:: fixed
         :tags: Publish
 
