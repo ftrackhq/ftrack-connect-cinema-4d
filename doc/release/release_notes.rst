@@ -7,6 +7,17 @@
 Release Notes
 *************
 
+.. release:: upcoming
+
+    .. change:: fixed
+
+        API version is incompatible with ftrack server version 3.5.
+
+    .. change:: fixed
+        :tags: Publish
+
+        Threading issues caused publishes to fail.
+
 .. release:: 0.1.2
     :date: 2016-07-14
 

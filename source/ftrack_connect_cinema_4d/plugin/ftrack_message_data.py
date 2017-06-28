@@ -4,19 +4,65 @@
 import c4d
 import c4d.plugins
 
+import time
+import uuid
 import ctypes
-import zlib
-import logging
-import collections
 
-import ftrack_connect_cinema_4d.core_message_event
+import logging
+import threading
+import collections
 
 #: ftrack message data plugin id
 PLUGIN_ID = 1037466
 
 
+class ProcessQueue(object):
+    def __init__(self):
+        self.__jobs = dict()
+        self.__results = dict()
+        self.__mutex = threading.Lock()
+
+    def add(self, fn, *args, **kwargs):
+        uid = int(uuid.uuid1().int>>102)
+
+        with self.__mutex:
+            self.__jobs.setdefault(
+                uid, {
+                    'fn':fn,
+                    'args':args,
+                    'kwargs':kwargs
+                }
+            )
+
+        return uid
+
+    def get(self, uid):
+        data = None
+
+        with self.__mutex:
+            data = self.__jobs.pop(
+                uid, None
+            )
+
+        return data
+
+    def get_result(self, uid, default=None):
+        with self.__mutex:
+            return self.__results.pop(
+                uid, default
+            )
+
+    def task_done(self, uid, result):
+        with self.__mutex:
+            self.__results.setdefault(
+                uid, result
+            )
+
+
 class FtrackMessageData(c4d.plugins.MessageData):
     '''ftrack message data plugin.'''
+
+    __queue = ProcessQueue()
 
     def __init__(self, *args, **kwargs):
         '''Instantiate ftrack message data.'''
@@ -40,19 +86,78 @@ class FtrackMessageData(c4d.plugins.MessageData):
             self.logger.debug(
                 u'Handling core message {0!r}: {1!r}'.format(id, message)
             )
-            topic_id_pointer = message.GetVoid(c4d.BFM_CORE_PAR1)
-            data_id_pointer = message.GetVoid(c4d.BFM_CORE_PAR2)
+
+            uid_id_pointer = message.GetVoid(
+                c4d.BFM_CORE_PAR1
+            )
+
             ctypes.pythonapi.PyCObject_AsVoidPtr.restype = ctypes.c_void_p
             ctypes.pythonapi.PyCObject_AsVoidPtr.argtypes = [ctypes.py_object]
-            topic_id = ctypes.pythonapi.PyCObject_AsVoidPtr(topic_id_pointer)
-            data_id = ctypes.pythonapi.PyCObject_AsVoidPtr(data_id_pointer)
 
-            self.logger.debug(
-                u'Dereferenced message content: {0!r}'.format((topic_id, data_id))
+            uid = ctypes.pythonapi.PyCObject_AsVoidPtr(uid_id_pointer)
+
+
+            task = self.__queue.get(
+                ctypes.pythonapi.PyCObject_AsVoidPtr(uid_id_pointer)
             )
-            result = ftrack_connect_cinema_4d.core_message_event.handle_event(
-                topic_id, data_id
-            )
-            self.logger.debug(u'Message handler result: {0!r}'.format(result))
+
+            if task is not None:
+
+                try:
+                    result = task.get('fn')(
+                        *task.get('args', []), **task.get('kwargs', {})
+                    )
+
+                except Exception as e:
+                    self.logger.exception(
+                        e
+                    )
+
+                    result = e
+
+                self.__queue.task_done(
+                    uid, result
+                )
+
+                self.logger.debug(
+                    u'Message handler result: {0!r}'.format(result)
+                )
 
         return True
+
+    @classmethod
+    def execute_deferred(cls, fn, *args, **kwargs):
+        uid = cls.__queue.add(
+            fn, *args, **kwargs
+        )
+
+        c4d.SpecialEventAdd(
+            PLUGIN_ID, p1=uid
+        )
+
+        return uid
+
+
+    @classmethod
+    def execute_in_main_thread(cls, fn, *args, **kwargs):
+        uid = cls.execute_deferred(
+            fn, *args, **kwargs
+        )
+
+        result = None
+        while result is None:
+            time.sleep(
+                0.1
+            )
+
+            result = cls.__queue.get_result(
+                uid, default=None
+            )
+
+        if isinstance(result, Exception):
+            raise result
+
+        return result
+
+
+

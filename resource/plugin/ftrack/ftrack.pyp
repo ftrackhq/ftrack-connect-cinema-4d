@@ -83,6 +83,5 @@ def register_plugins():
         dat=ftrack_connect_cinema_4d.plugin.FtrackMessageData()
     )
 
-
 if __name__ == '__main__':
     register_plugins()
