@@ -7,7 +7,20 @@
 Release Notes
 *************
 
-.. release:: 0.1.3
+.. release:: 0.1.5
+    :date: 2017-10-12
+
+    .. change:: fixed
+        :tags: Publish
+
+        Only the default "Upload" asset type can be selected before erasing the text.
+
+    .. change:: fixed
+        :tags: Publish
+
+        Publish times out after 30 seconds.
+
+.. release:: 0.1.4
     :date: 2017-06-28
 
     .. change:: fixed
