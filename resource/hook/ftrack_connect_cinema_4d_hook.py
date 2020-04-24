@@ -134,6 +134,17 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
                 launchArguments=[]
             ))
 
+            applications.extend(self._searchFilesystem(
+                expression=prefix + ['(?i)(MAXON CINEMA) 4D .+','(?i)CINEMA 4D.app'],
+                versionExpression=version_expression,
+                label='Cinema 4D',
+                variant='{version}',
+                icon='cinema_4d',
+                applicationIdentifier='cinema_4d_{version}',
+                launchArguments=[]
+            ))
+
+
         elif sys.platform == 'win32':
             prefix = ['C:\\', 'Program Files.*']
 
@@ -148,7 +159,7 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
             ))
 
             applications.extend(self._searchFilesystem(
-                expression=prefix + ['(?i)MAXON CINEMA 4D .+','CINEMA 4D.exe'],
+                expression=prefix + ['(?i)(MAXON CINEMA) 4D .+','(?i)CINEMA 4D.exe'],
                 versionExpression=version_expression,
                 label='Cinema 4D',
                 variant='{version}',
