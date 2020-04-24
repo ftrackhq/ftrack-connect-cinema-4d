@@ -117,14 +117,15 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
         applications = []
 
         version_expression = re.compile(
-            r'CINEMA 4D (?P<version>R[\d.]+[\d\w\s]*)'
+            r'CINEMA 4D (?P<version>R[\d.]+[\d\w\s]*)',
+            re.IGNORECASE
         )
 
         if sys.platform == 'darwin':
             prefix = ['/', 'Applications']
 
             applications.extend(self._searchFilesystem(
-                expression=prefix + ['MAXON', 'CINEMA 4D .+', 'CINEMA 4D.app'],
+                expression=prefix + ['MAXON', '(?i)CINEMA 4D .+', 'CINEMA 4D.app'],
                 versionExpression=version_expression,
                 label='Cinema 4D',
                 variant='{version}',
@@ -137,7 +138,7 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
             prefix = ['C:\\', 'Program Files.*']
 
             applications.extend(self._searchFilesystem(
-                expression=prefix + ['MAXON', 'CINEMA 4D .+', 'CINEMA 4D.exe'],
+                expression=prefix + ['MAXON', '(?i)CINEMA 4D .+', 'CINEMA 4D.exe'],
                 versionExpression=version_expression,
                 label='Cinema 4D',
                 variant='{version}',
