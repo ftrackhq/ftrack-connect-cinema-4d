@@ -125,7 +125,7 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
             prefix = ['/', 'Applications']
 
             applications.extend(self._searchFilesystem(
-                expression=prefix + ['MAXON', 'CINEMA 4D .+', 'CINEMA 4D.app'],
+                expression=prefix + ['(?i)MAXON', '(?i)CINEMA 4D .+', '(?i)CINEMA 4D.app'],
                 versionExpression=version_expression,
                 label='Cinema 4D',
                 variant='{version}',
@@ -149,7 +149,7 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
             prefix = ['C:\\', 'Program Files.*']
 
             applications.extend(self._searchFilesystem(
-                expression=prefix + ['MAXON', 'CINEMA 4D .+', 'CINEMA 4D.exe'],
+                expression=prefix + ['(?i)MAXON', '(?i)CINEMA 4D .+', '(?i)CINEMA 4D.exe'],
                 versionExpression=version_expression,
                 label='Cinema 4D',
                 variant='{version}',
@@ -167,8 +167,6 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
                 applicationIdentifier='cinema_4d_{version}',
                 launchArguments=[]
             ))
-
-            print 'APP {}'.format(applications)
 
         self.logger.debug(
             'Discovered applications:\n{0}'.format(
