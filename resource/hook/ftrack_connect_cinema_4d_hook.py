@@ -117,7 +117,8 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
         applications = []
 
         version_expression = re.compile(
-            r'CINEMA 4D (?P<version>R[\d.]+[\d\w\s]*)'
+            r'CINEMA 4D (?P<version>R[\d.]+[\d\w\s]*)',
+            re.IGNORECASE
         )
 
         if sys.platform == 'darwin':
@@ -125,6 +126,16 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
 
             applications.extend(self._searchFilesystem(
                 expression=prefix + ['MAXON', 'CINEMA 4D .+', 'CINEMA 4D.app'],
+                versionExpression=version_expression,
+                label='Cinema 4D',
+                variant='{version}',
+                icon='cinema_4d',
+                applicationIdentifier='cinema_4d_{version}',
+                launchArguments=[]
+            ))
+
+            applications.extend(self._searchFilesystem(
+                expression=prefix + ['(?i)(MAXON CINEMA) 4D .+', '(?i)CINEMA 4D.app'],
                 versionExpression=version_expression,
                 label='Cinema 4D',
                 variant='{version}',
@@ -146,6 +157,16 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
                 launchArguments=[]
             ))
 
+            applications.extend(self._searchFilesystem(
+                expression=prefix + ['(?i)(MAXON CINEMA) 4D .+', '(?i)CINEMA 4D.exe'],
+                versionExpression=version_expression,
+                label='Cinema 4D',
+                variant='{version}',
+                icon='cinema_4d',
+                applicationIdentifier='cinema_4d_{version}',
+                launchArguments=[]
+            ))
+
         self.logger.debug(
             'Discovered applications:\n{0}'.format(
                 pprint.pformat(applications)
@@ -157,21 +178,20 @@ class ApplicationStore(ftrack_connect.application.ApplicationStore):
 
 def register(registry, **kw):
     '''Register hooks.'''
-
     logger = logging.getLogger(
         'ftrack_plugin:ftrack_connect_cinema_4d_hook.register'
     )
 
-    # Validate that registry is an instance of ftrack.Registry. If not,
-    # assume that register is being called from a new or incompatible API and
-    # return without doing anything.
-    if not isinstance(registry, ftrack.Registry):
+    # Validate that registry is the event handler registry. If not,
+    # assume that register is being called to register Locations or from a new
+    # or incompatible API, and return without doing anything.
+    if registry is not ftrack.EVENT_HANDLERS:
         logger.debug(
-            'Not subscribing plugin as passed argument {0!r} is not an '
-            'ftrack.Registry instance.'.format(registry)
+            'Not subscribing plugin as passed argument {0!r} is not ftrack.EVENT_HANDLERS.'.format(
+                registry
+            )
         )
         return
-
     # Create store containing applications.
     applicationStore = ApplicationStore()
 

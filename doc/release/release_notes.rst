@@ -7,6 +7,14 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+        :tags: Discover
+
+        Application is not discovered on version higher than 19.
+
+
 .. release:: 0.1.5
     :date: 2017-10-12
 
