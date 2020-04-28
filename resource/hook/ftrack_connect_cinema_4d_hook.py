@@ -182,16 +182,16 @@ def register(registry, **kw):
         'ftrack_plugin:ftrack_connect_cinema_4d_hook.register'
     )
 
-    # Validate that registry is an instance of ftrack.Registry. If not,
-    # assume that register is being called from a new or incompatible API and
-    # return without doing anything.
-    if not isinstance(registry, ftrack.Registry):
+    # Validate that registry is the event handler registry. If not,
+    # assume that register is being called to register Locations or from a new
+    # or incompatible API, and return without doing anything.
+    if registry is not ftrack.EVENT_HANDLERS:
         logger.debug(
-            'Not subscribing plugin as passed argument {0!r} is not an '
-            'ftrack.Registry instance.'.format(registry)
+            'Not subscribing plugin as passed argument {0!r} is not ftrack.EVENT_HANDLERS.'.format(
+                registry
+            )
         )
         return
-
     # Create store containing applications.
     applicationStore = ApplicationStore()
 
