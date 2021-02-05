@@ -104,7 +104,7 @@ class BuildPlugin(setuptools.Command):
             )
 
         # Add dependencies.
-        modules = ('appdirs>=1.4.3,<2', 'ftrack-python-api>=1.1.1,<2')
+        modules = ('appdirs>=1.4.3,<2', 'ftrack-python-api>=2,<3')
         for module in modules:
             pip.main(
                 [
@@ -192,21 +192,10 @@ setup(
     tests_require=[
         'pytest >= 2.3.5, < 3'
     ],
-    dependency_links=[
-        (
-            'https://bitbucket.org/ftrack/lowdown/get/0.1.0.zip'
-            '#egg=lowdown-0.1.0'
-        )
-    ],
     cmdclass={
         'test': PyTest,
         'build_plugin': BuildPlugin,
         'install_plugin': InstallPlugin
     },
-    data_files=[
-        (
-            'ftrack_connect_cinema_4d/hook',
-            glob.glob(os.path.join(ROOT_PATH, 'resource', 'hook', '*.py'))
-        )
-    ]
+    python_requires=">=3, <4"
 )
