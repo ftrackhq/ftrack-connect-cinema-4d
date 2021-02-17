@@ -187,7 +187,8 @@ class SparkCommand(c4d.plugins.CommandData):
             host_version=c4d.GetC4DVersion(),
             plugin_version=ftrack_connect_cinema_4d.__version__
         )
-        encodedOptions = base64.b64encode(json.dumps(options))
+        # strip result base of b%27 start chars
+        encodedOptions = base64.b64encode(json.dumps(options).encode('utf-8')).decode('utf-8')
         return '{0}?options={1}'.format(FTRACK_CONNECT_SPARK_URL, encodedOptions)
 
     def Execute(self, doc):
