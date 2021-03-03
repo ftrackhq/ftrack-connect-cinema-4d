@@ -10,10 +10,13 @@ import glob
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
-import setuptools
 import setuptools.command.build_py
 import distutils.log
 
+from pip._internal import main as pip_main
+
+
+PLUGIN_NAME = 'ftrack-connect-cinema-4d-{0}'
 
 ROOT_PATH = os.path.dirname(
     os.path.realpath(__file__)
@@ -32,8 +35,18 @@ BUILD_PATH = os.path.join(
 )
 
 STAGING_PATH = os.path.join(
+    BUILD_PATH,
+    PLUGIN_NAME
+)
+
+PLUGIN_STAGING_PATH = os.path.join(
     BUILD_PATH, 'plugin'
 )
+
+HOOK_PATH = os.path.join(
+    RESOURCE_PATH, 'hook'
+)
+
 
 README_PATH = os.path.join(ROOT_PATH, 'README.rst')
 
@@ -43,6 +56,9 @@ with open(os.path.join(
     VERSION = re.match(
         r'.*__version__ = \'(.*?)\'', _version_file.read(), re.DOTALL
     ).group(1)
+
+
+STAGING_PATH = STAGING_PATH.format(VERSION)
 
 
 # Custom commands.
@@ -76,25 +92,44 @@ class BuildPlugin(setuptools.Command):
     def run(self):
         '''Run the build step.'''
         # Clean staging path
-        shutil.rmtree(STAGING_PATH, ignore_errors=True)
+        shutil.rmtree(BUILD_PATH, ignore_errors=True)
 
+        ############# INTEGRATION ###############
+
+        # Copy hook files
+        shutil.copytree(
+            HOOK_PATH,
+            os.path.join(STAGING_PATH, 'hook')
+        )
+
+        # Generate plugin zip
+        shutil.make_archive(
+            os.path.join(
+                BUILD_PATH,
+                PLUGIN_NAME.format(VERSION)
+            ),
+            'zip',
+            STAGING_PATH
+        )
+
+        ############# PLUGIN ###############
         # Copy plugin files
         shutil.copytree(
             os.path.join(RESOURCE_PATH, 'plugin'),
-            STAGING_PATH
+            PLUGIN_STAGING_PATH
         )
 
         # Copy source package
         shutil.copytree(
             os.path.join(SOURCE_PATH, 'ftrack_connect_cinema_4d'),
-            os.path.join(STAGING_PATH, 'ftrack', 'ftrack_connect_cinema_4d')
+            os.path.join(PLUGIN_STAGING_PATH, 'ftrack', 'ftrack_connect_cinema_4d')
         )
 
         # Copy spark package
         try:
             shutil.copytree(
                 os.environ['FTRACK_CONNECT_SPARK_DIST_DIR'],
-                os.path.join(STAGING_PATH, 'ftrack', 'ftrack_connect_spark')
+                os.path.join(PLUGIN_STAGING_PATH, 'ftrack', 'ftrack_connect_spark')
             )
         except KeyError:
             raise ValueError(
@@ -112,7 +147,7 @@ class BuildPlugin(setuptools.Command):
                     '--upgrade',
                     module,
                     '--target',
-                    os.path.join(STAGING_PATH, 'ftrack', 'dependencies')
+                    os.path.join(PLUGIN_STAGING_PATH, 'ftrack', 'dependencies')
                 ]
             )
 
