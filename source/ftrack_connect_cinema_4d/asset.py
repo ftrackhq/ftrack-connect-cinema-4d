@@ -15,10 +15,7 @@ logger = logging.getLogger('ftrack_connect_cinema_4d.asset')
 
 
 def encode_unicode(value):
-    if isinstance(value, unicode):
-        return value.encode('utf-8')
-    else:
-        return value
+    return value
 
 
 def get_importable_components(session, version_id):
