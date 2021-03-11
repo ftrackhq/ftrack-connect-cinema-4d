@@ -7,12 +7,13 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 0.2.0-beta-1
+    :date: 2021-03-11
 
     .. change:: fixed
         :tags: Discover
 
-        Application is not discovered on version higher than 19.
+       Update hook to application launcher.
 
 
 .. release:: 0.1.5
