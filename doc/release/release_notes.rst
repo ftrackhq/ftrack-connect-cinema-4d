@@ -7,14 +7,17 @@
 Release Notes
 *************
 
-.. release:: 0.2.0-beta-1
-    :date: 2021-03-11
+.. release:: 0.2.0
+    :date: 2021-09-07
 
     .. change:: fixed
         :tags: Discover
 
-       Update hook to application launcher.
+        Update hook to application launcher.
 
+    .. change:: changed
+
+        Update code to run on python 3.7
 
 .. release:: 0.1.5
     :date: 2017-10-12
