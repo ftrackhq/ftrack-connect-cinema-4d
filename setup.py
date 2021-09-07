@@ -42,9 +42,6 @@ STAGING_PATH = os.path.join(
     PLUGIN_NAME
 )
 
-PLUGIN_STAGING_PATH = os.path.join(
-    BUILD_PATH, 'plugin'
-)
 
 HOOK_PATH = os.path.join(
     RESOURCE_PATH, 'hook'
@@ -58,6 +55,10 @@ VERSION = '.'.join(release.split('.')[:3])
 
 
 STAGING_PATH = STAGING_PATH.format(VERSION)
+
+PLUGIN_STAGING_PATH = os.path.join(
+    STAGING_PATH, 'plugin'
+)
 
 
 # Custom commands.
@@ -101,15 +102,6 @@ class BuildPlugin(setuptools.Command):
             os.path.join(STAGING_PATH, 'hook')
         )
 
-        # Generate plugin zip
-        shutil.make_archive(
-            os.path.join(
-                BUILD_PATH,
-                PLUGIN_NAME.format(VERSION)
-            ),
-            'zip',
-            STAGING_PATH
-        )
 
         ############# PLUGIN ###############
         # Copy plugin files
@@ -147,6 +139,16 @@ class BuildPlugin(setuptools.Command):
                     os.path.join(PLUGIN_STAGING_PATH, 'ftrack', 'dependencies')
                 ]
             )
+
+        # Generate plugin zip
+        shutil.make_archive(
+            os.path.join(
+                BUILD_PATH,
+                PLUGIN_NAME.format(VERSION)
+            ),
+            'zip',
+            STAGING_PATH
+        )
 
 
 class InstallPlugin(setuptools.Command):
