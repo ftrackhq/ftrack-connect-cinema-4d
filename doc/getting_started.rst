@@ -48,7 +48,8 @@ directory.
   1. Download the Cinema 4D plugin from the
      `ftrack Integrations page <https://www.ftrack.com/integrations>`_.
   2. Extract the zip archive.
-  3. Copy the `ftrack` directory in the plugin directory within Cinema 4D's
+  3. Copy the result folder into FTRACK_CONNECT_PLUGIN_PATH 
+  3. Copy the `plugin/ftrack` directory in the plugin directory within Cinema 4D's
      preferences folder. You can find this directory from Cinema 4D by
      navigating to :guilabel:`Edit --> Preferences --> Open preferences folder`.
 
