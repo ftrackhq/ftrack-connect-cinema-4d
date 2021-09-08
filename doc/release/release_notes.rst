@@ -19,6 +19,12 @@ Release Notes
 
         Update code to run on python 3.7
 
+.. warning::
+
+    From this version the support for ftrack-connect 1.X is dropped, and
+    only ftrack-conenct 2.0 will be supported up to the integration EOL.
+
+
 .. release:: 0.1.5
     :date: 2017-10-12
 
