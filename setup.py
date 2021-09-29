@@ -132,11 +132,11 @@ class BuildPlugin(setuptools.Command):
         # Add dependencies.
         modules = ('appdirs>=1.4.3,<2', 'ftrack-python-api>=1.1.1,<3')
         for module in modules:
-
+            destination_path = os.path.join(PLUGIN_STAGING_PATH, 'ftrack', 'dependencies')
             subprocess.check_call(
                 [
-                    sys.executable, '-m', 'pip', 'install','.','--target',
-                    os.path.join(PLUGIN_STAGING_PATH, 'ftrack', 'dependencies')
+                    sys.executable, '-m', 'pip', 'install',module,'--target',
+                    destination_path
                 ]
             )
 
