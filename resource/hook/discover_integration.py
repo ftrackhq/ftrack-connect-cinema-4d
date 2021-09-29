@@ -17,7 +17,7 @@ def on_discover_cinema_integration(session, event):
     data = {
         'integration': {
             "name": 'ftrack-connect-cinema-4d',
-            'version': '0.1.5'
+            'version': '0.2.0'
         }
     }
     return data
@@ -34,12 +34,14 @@ def register(session):
     )
     session.event_hub.subscribe(
         'topic=ftrack.connect.application.launch'
-        ' and data.application.identifier=cinema-4d*',
+        ' and data.application.identifier=cinema-4d*'
+        ' and data.application.version >= 23',
         handle_event
     )
 
     session.event_hub.subscribe(
         'topic=ftrack.connect.application.discover'
-        ' and data.application.identifier=cinema-4d*',
+        ' and data.application.identifier=cinema-4d*'
+        ' and data.application.version >= 23',
         handle_event
     )
