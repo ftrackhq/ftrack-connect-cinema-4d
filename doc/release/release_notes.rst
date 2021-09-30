@@ -7,6 +7,15 @@
 Release Notes
 *************
 
+.. release:: 0.2.1
+    :date: 2021-09-30
+
+    .. change:: fixed
+        :tags: plugin
+
+        Plugin misses local dependencies.
+
+
 .. release:: 0.2.0
     :date: 2021-09-07
 
