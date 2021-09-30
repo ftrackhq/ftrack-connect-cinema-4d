@@ -15,6 +15,15 @@ Release Notes
 
         Plugin misses local dependencies.
 
+    .. change:: changed
+        :tags: Documentation
+
+        Update installation documentation for plugin.
+
+    .. change:: changed
+        :tags: Hook
+
+        Limit discovery to >= R23 due to python3 introduction.
 
 .. release:: 0.2.0
     :date: 2021-09-07
