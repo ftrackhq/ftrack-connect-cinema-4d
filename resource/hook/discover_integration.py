@@ -17,7 +17,7 @@ def on_discover_cinema_integration(session, event):
     data = {
         'integration': {
             "name": 'ftrack-connect-cinema-4d',
-            'version': '0.2.0'
+            'version': '0.2.1'
         }
     }
     return data
