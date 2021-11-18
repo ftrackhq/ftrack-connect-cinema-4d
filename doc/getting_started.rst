@@ -11,8 +11,7 @@ and you will be up and running in no time.
 Requirements
 ------------
 
-The plugin requires Cinema 4D R17 or later and either Windows (7 or later with
-Internet Explorer 11 installed), or macOS (10.11 or newer).
+The plugin requires Cinema 4D R23 or later and either Windows or macOS .
 
 .. _getting_started/signup:
 
