@@ -14,6 +14,7 @@ ftrack connect integration for MAXON Cinema 4D.
     getting_started
     cinema_4d/index
     using/index
+    development/installing
     troubleshooting
     release/index
     glossary

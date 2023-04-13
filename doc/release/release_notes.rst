@@ -7,12 +7,40 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 0.2.1
+    :date: 2021-09-30
+
+    .. change:: fixed
+        :tags: plugin
+
+        Plugin misses local dependencies.
+
+    .. change:: changed
+        :tags: Documentation
+
+        Update installation documentation for plugin.
+
+    .. change:: changed
+        :tags: Hook
+
+        Limit discovery to >= R23 due to python3 introduction.
+
+.. release:: 0.2.0
+    :date: 2021-09-07
 
     .. change:: fixed
         :tags: Discover
 
-        Application is not discovered on version higher than 19.
+        Update hook to application launcher.
+
+    .. change:: changed
+
+        Update code to run on python 3.7
+
+.. warning::
+
+    From this version the support for ftrack-connect 1.X is dropped, and
+    only ftrack-conenct 2.0 will be supported up to the integration EOL.
 
 
 .. release:: 0.1.5

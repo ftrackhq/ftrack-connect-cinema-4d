@@ -9,14 +9,14 @@ import appdirs
 
 
 def get_log_directory():
-    '''Get log directory. 
+    '''Get log directory.
 
     Will create the directory (recursively) if it does not exist.
 
     Raise if the directory can not be created.
     '''
-    user_data_dir = appdirs.user_data_dir('ftrack-connect', 'ftrack');
-    log_directory = os.path.join(user_data_dir, 'log');
+    user_data_dir = appdirs.user_data_dir('ftrack-connect', 'ftrack')
+    log_directory = os.path.join(user_data_dir, 'log')
     try:
         os.makedirs(log_directory)
     except OSError as error:
@@ -31,7 +31,7 @@ def get_log_directory():
 def configure_logging(loggerName, level=None, format=None):
     '''Configure `loggerName` loggers with file handler.
 
-    Optionally specify log *level* (default logging.DEBUG) 
+    Optionally specify log *level* (default logging.DEBUG)
 
     Optionally set *format*, default:
     `%(asctime)s - %(name)s - %(levelname)s - %(message)s`.

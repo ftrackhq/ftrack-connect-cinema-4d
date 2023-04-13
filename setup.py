@@ -2,6 +2,9 @@
 # :copyright: Copyright (c) 2015 ftrack
 
 import os
+import sys
+import subprocess
+
 import os.path
 import re
 import shutil
@@ -10,10 +13,13 @@ import glob
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
-import setuptools
 import setuptools.command.build_py
 import distutils.log
+import setuptools_scm
 
+
+
+PLUGIN_NAME = 'ftrack-connect-cinema-4d-{0}'
 
 ROOT_PATH = os.path.dirname(
     os.path.realpath(__file__)
@@ -32,17 +38,27 @@ BUILD_PATH = os.path.join(
 )
 
 STAGING_PATH = os.path.join(
-    BUILD_PATH, 'plugin'
+    BUILD_PATH,
+    PLUGIN_NAME
 )
+
+
+HOOK_PATH = os.path.join(
+    RESOURCE_PATH, 'hook'
+)
+
 
 README_PATH = os.path.join(ROOT_PATH, 'README.rst')
 
-with open(os.path.join(
-    SOURCE_PATH, 'ftrack_connect_cinema_4d', '_version.py')
-) as _version_file:
-    VERSION = re.match(
-        r'.*__version__ = \'(.*?)\'', _version_file.read(), re.DOTALL
-    ).group(1)
+release = setuptools_scm.get_version(version_scheme='post-release')
+VERSION = '.'.join(release.split('.')[:3])
+
+
+STAGING_PATH = STAGING_PATH.format(VERSION)
+
+PLUGIN_STAGING_PATH = os.path.join(
+    STAGING_PATH, 'plugin'
+)
 
 
 # Custom commands.
@@ -76,25 +92,35 @@ class BuildPlugin(setuptools.Command):
     def run(self):
         '''Run the build step.'''
         # Clean staging path
-        shutil.rmtree(STAGING_PATH, ignore_errors=True)
+        shutil.rmtree(BUILD_PATH, ignore_errors=True)
 
+        ############# INTEGRATION ###############
+
+        # Copy hook files
+        shutil.copytree(
+            HOOK_PATH,
+            os.path.join(STAGING_PATH, 'hook')
+        )
+
+
+        ############# PLUGIN ###############
         # Copy plugin files
         shutil.copytree(
             os.path.join(RESOURCE_PATH, 'plugin'),
-            STAGING_PATH
+            PLUGIN_STAGING_PATH
         )
 
         # Copy source package
         shutil.copytree(
             os.path.join(SOURCE_PATH, 'ftrack_connect_cinema_4d'),
-            os.path.join(STAGING_PATH, 'ftrack', 'ftrack_connect_cinema_4d')
+            os.path.join(PLUGIN_STAGING_PATH, 'ftrack', 'ftrack_connect_cinema_4d')
         )
 
         # Copy spark package
         try:
             shutil.copytree(
                 os.environ['FTRACK_CONNECT_SPARK_DIST_DIR'],
-                os.path.join(STAGING_PATH, 'ftrack', 'ftrack_connect_spark')
+                os.path.join(PLUGIN_STAGING_PATH, 'ftrack', 'ftrack_connect_spark')
             )
         except KeyError:
             raise ValueError(
@@ -104,17 +130,25 @@ class BuildPlugin(setuptools.Command):
             )
 
         # Add dependencies.
-        modules = ('appdirs>=1.4.3,<2', 'ftrack-python-api>=1.1.1,<2')
+        modules = ('appdirs>=1.4.3,<2', 'ftrack-python-api>=1.1.1,<3')
         for module in modules:
-            pip.main(
+            destination_path = os.path.join(PLUGIN_STAGING_PATH, 'ftrack', 'dependencies')
+            subprocess.check_call(
                 [
-                    'install',
-                    '--upgrade',
-                    module,
-                    '--target',
-                    os.path.join(STAGING_PATH, 'ftrack', 'dependencies')
+                    sys.executable, '-m', 'pip', 'install',module,'--target',
+                    destination_path
                 ]
             )
+
+        # Generate plugin zip
+        shutil.make_archive(
+            os.path.join(
+                BUILD_PATH,
+                PLUGIN_NAME.format(VERSION)
+            ),
+            'zip',
+            STAGING_PATH
+        )
 
 
 class InstallPlugin(setuptools.Command):
@@ -166,11 +200,17 @@ class InstallPlugin(setuptools.Command):
             u'Installed plugin to: {0}'.format(ftrack_connect_cinema_4d_plugin_dir)
         )
 
+version_template = '''
+# :coding: utf-8
+# :copyright: Copyright (c) 2017-2020 ftrack
+
+__version__ = {version!r}
+'''
+
 
 # Configuration.
 setup(
     name='ftrack connect Cinema 4D',
-    version=VERSION,
     description='ftrack connect integration for MAXON Cinema 4D.',
     long_description=open(README_PATH).read(),
     keywords='',
@@ -185,18 +225,17 @@ setup(
     setup_requires=[
         'sphinx >= 1.2.2, < 2',
         'sphinx_rtd_theme >= 0.1.6, < 2',
-        'lowdown >= 0.1.0, < 1'
+        'lowdown >= 0.1.0, < 1',
+        'setuptools>=45.0.0',
+        'setuptools_scm'
     ],
-    install_requires=[
-    ],
+    use_scm_version={
+        'write_to': 'source/ftrack_connect_cinema_4d/_version.py',
+        'write_to_template': version_template,
+        'version_scheme': 'post-release'
+    },
     tests_require=[
         'pytest >= 2.3.5, < 3'
-    ],
-    dependency_links=[
-        (
-            'https://bitbucket.org/ftrack/lowdown/get/0.1.0.zip'
-            '#egg=lowdown-0.1.0'
-        )
     ],
     cmdclass={
         'test': PyTest,
@@ -208,5 +247,6 @@ setup(
             'ftrack_connect_cinema_4d/hook',
             glob.glob(os.path.join(ROOT_PATH, 'resource', 'hook', '*.py'))
         )
-    ]
+    ],
+    python_requires=">=3, <4"
 )

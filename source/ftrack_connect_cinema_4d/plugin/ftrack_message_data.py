@@ -91,14 +91,14 @@ class FtrackMessageData(c4d.plugins.MessageData):
                 c4d.BFM_CORE_PAR1
             )
 
-            ctypes.pythonapi.PyCObject_AsVoidPtr.restype = ctypes.c_void_p
-            ctypes.pythonapi.PyCObject_AsVoidPtr.argtypes = [ctypes.py_object]
 
-            uid = ctypes.pythonapi.PyCObject_AsVoidPtr(uid_id_pointer)
+            ctypes.pythonapi.PyCapsule_GetPointer.restype = ctypes.c_void_p
+            ctypes.pythonapi.PyCapsule_GetPointer.argtypes = [ctypes.py_object]
 
+            uid = ctypes.pythonapi.PyCapsule_GetPointer(uid_id_pointer, None)
 
             task = self.__queue.get(
-                ctypes.pythonapi.PyCObject_AsVoidPtr(uid_id_pointer)
+                ctypes.pythonapi.PyCapsule_GetPointer(uid_id_pointer, None)
             )
 
             if task is not None:

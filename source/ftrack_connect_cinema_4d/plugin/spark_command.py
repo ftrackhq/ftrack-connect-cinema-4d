@@ -131,7 +131,7 @@ class SparkCommand(c4d.plugins.CommandData):
                 try:
                     config = json.load(file)
                 except Exception:
-                    logger.exception(
+                    self.logger.exception(
                         u'Exception reading json config in {0}.'.format(
                             config_file
                         )
@@ -151,7 +151,7 @@ class SparkCommand(c4d.plugins.CommandData):
 
         try:
             self._session = ftrack_api.Session(
-                server_url=server_url, api_user=api_user, api_key=api_key
+                server_url=server_url, api_user=api_user, api_key=api_key, auto_connect_event_hub=True
             )
         except Exception:
             self.logger.exception('ftrack api session initialization failed.')
@@ -177,7 +177,6 @@ class SparkCommand(c4d.plugins.CommandData):
 
         self.initialized = True
 
-
     def _get_url(self, session, subscription_id):
         '''Return URL to spark'''
         options = dict(
@@ -188,7 +187,8 @@ class SparkCommand(c4d.plugins.CommandData):
             host_version=c4d.GetC4DVersion(),
             plugin_version=ftrack_connect_cinema_4d.__version__
         )
-        encodedOptions = base64.b64encode(json.dumps(options))
+        # strip result base of b%27 start chars
+        encodedOptions = base64.b64encode(json.dumps(options).encode('utf-8')).decode('utf-8')
         return '{0}?options={1}'.format(FTRACK_CONNECT_SPARK_URL, encodedOptions)
 
     def Execute(self, doc):

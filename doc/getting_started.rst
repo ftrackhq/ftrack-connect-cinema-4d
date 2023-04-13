@@ -11,8 +11,7 @@ and you will be up and running in no time.
 Requirements
 ------------
 
-The plugin requires Cinema 4D R17 or later and either Windows (7 or later with
-Internet Explorer 11 installed), or macOS (10.11 or newer).
+The plugin requires Cinema 4D R23 or later and either Windows or macOS .
 
 .. _getting_started/signup:
 
@@ -42,21 +41,8 @@ Open Connect and sign in with your company's ftrack URL, e.g.
 3. Cinema 4D plugin
 -------------------
 
-Download and install the Cinema 4D plugin by copying it to Cinema 4D's plugin
-directory.
+1 Start c4d and from edit -> preferences -> plugins add a new folder pointing to:: 
 
-  1. Download the Cinema 4D plugin from the
-     `ftrack Integrations page <https://www.ftrack.com/integrations>`_.
-  2. Extract the zip archive.
-  3. Copy the `ftrack` directory in the plugin directory within Cinema 4D's
-     preferences folder. You can find this directory from Cinema 4D by
-     navigating to :guilabel:`Edit --> Preferences --> Open preferences folder`.
+ /ftrack Connect-<version>re/source/connect-standard-plugins/ftrack-connect-cinema-4d-<version>\plugin
 
-.. figure:: /image/install_plugin_directory.png
-   :align: center
-
-.. figure:: /image/install_plugin_preferences.png
-   :align: center
-
-Finally, launch Cinema 4D (or restart it if you already have it open). Then
-open the ftrack dialog from the ftrack menu.
+2 close and restart cinema then open the ftrack dialog from the ftrack menu.

@@ -30,7 +30,7 @@ files for ftrack-connect-spark.
 
 set the environment variable `FTRACK_CONNECT_CINEMA_4D_PLUGIN_DIR` to the
 installation directory  for ftrack-connectc-cinema-4d, e.g.:
-`/Users/john/Library/Preferences/MAXON/CINEMA 4D R17_89538A46/plugins/ftrack`.
+`/Users/john/Library/Preferences/MAXON/CINEMA 4D RXX_89538A46/plugins/ftrack`.
 
 Build the plugin (Will build the plugin and dependencies in `build/plugin`)::
 
@@ -61,15 +61,4 @@ With a copy of the source it is also possible to run the unit tests::
 Dependencies
 ============
 
-* `Python <http://python.org>`_ >= 2.6, < 3
-
-Additional For building
------------------------
-
-* `Sphinx <http://sphinx-doc.org/>`_ >= 1.2.2, < 2
-* `sphinx_rtd_theme <https://github.com/snide/sphinx_rtd_theme>`_ >= 0.1.6, < 1
-
-Additional For testing
-----------------------
-
-* `Pytest <http://pytest.org>`_  >= 2.3.5
+* `Python <http://python.org>`_ >= 3.0
