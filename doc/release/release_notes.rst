@@ -7,6 +7,16 @@
 Release Notes
 *************
 
+.. release:: 0.2.2
+    :date: 2023-04-13
+
+    .. change:: fix
+        :tags: plugin
+
+        Removed R23 limitation to enable discover and launch of 2023+ versions.
+        Rebuilt plugin with latest dependencies.
+
+
 .. release:: 0.2.1
     :date: 2021-09-30
 
@@ -24,6 +34,7 @@ Release Notes
         :tags: Hook
 
         Limit discovery to >= R23 due to python3 introduction.
+
 
 .. release:: 0.2.0
     :date: 2021-09-07

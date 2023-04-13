@@ -48,7 +48,7 @@ HOOK_PATH = os.path.join(
 )
 
 
-README_PATH = os.path.join(ROOT_PATH, 'README.rst')
+README_PATH = os.path.join(ROOT_PATH, 'README.md')
 
 release = setuptools_scm.get_version(version_scheme='post-release')
 VERSION = '.'.join(release.split('.')[:3])
